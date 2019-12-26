@@ -1,0 +1,7 @@
+Search engine:
+    Crawl pages; for each page:
+        Gather document information THEN Calculate TF-IDF vector and store per url
+
+    On query:
+        Calculate cosine similarity w/ search vector and others
+            Calculate similarity w/ all and return closest one
