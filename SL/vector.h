@@ -27,11 +27,10 @@ public:
 	bool empty();
 
 	// Accessors
-	T &operator[](size_t index);
-	// at
-	// front
-	// back
-
+	T& operator[](size_t index);
+	T& at(size_t index);
+	T& front();
+	T& back();
 
 	// Modifying
 	// push_back

@@ -56,12 +56,27 @@ bool vector<T>::empty() {
 // Accessors
 
 template<class T>
-T &vector<T>::operator[](size_t index) {
+T& vector<T>::operator[](size_t index) {
+	return vector<T>::at(index);
+}
+
+template<class T>
+T& vector<T>::at(size_t index) {
 	if (index >= size_) {
 		// TODO: Should swap out with exception class
 		throw "Out of range exception!";
 	}
 	return data_[index];
+}
+
+template<class T>
+T& vector<T>::front() {
+	return vector<T>::at(0);
+}
+
+template<class T>
+T& vector<T>::back() {
+	return vector<T>::at(size_ - 1);
 }
 
 
