@@ -9,12 +9,6 @@ namespace SL {
 
 template<class T> 
 class vector {
-private:
-	const size_t DEFAULT_SIZE = 10;
-	size_t capacity_;
-	size_t size_;
-	T *data_;
-
 public:
 	// Constructors
 	vector();
@@ -33,16 +27,21 @@ public:
 	T& back();
 
 	// Modifying
-	// push_back
-	// pop_back
-	// insert
-	// erase
-	// swap
-	// clear
+	void push_back(T val);
+	void pop_back(T val);
 
 	// Destructor
 	~vector();
 
+private:
+	const size_t DEFAULT_SIZE = 10;
+	const size_t UPDATE_FACTOR = 2;
+	size_t capacity_;
+	size_t size_;
+	T *data_;
+
+
+	void increase_capacity();
 };
 
 

@@ -81,6 +81,20 @@ T& vector<T>::back() {
 
 
 // Modifying
+template<class T>
+void vector<T>::push_back(T val) {
+	if (size_ == capacity_) {
+		// need to update capacity
+		vector<T>::increase_capacity();
+	}
+	data_[size_] = val;
+	size_++;
+}
+
+template<class T>
+void vector<T>::pop_back(T val) {
+	size_--;
+}
 
 
 
@@ -89,4 +103,19 @@ T& vector<T>::back() {
 template<class T> 
 vector<T>::~vector() {
 	delete[] data_;
+}
+
+
+
+template<class T>
+void vector<T>::increase_capacity() {
+	capacity_ *= UPDATE_FACTOR;
+	T* tempData = new T[capacity_];
+
+	for (int i = 0; i < size_; i++) {
+		tempData[i] = data_[i];
+	}
+
+	delete[] data_;
+	data_ = tempData;
 }
