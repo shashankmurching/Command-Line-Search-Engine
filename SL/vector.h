@@ -83,6 +83,7 @@ public:
 
 	void pop_back() {
 		size_--;
+		prune_capacity();
 	}
 
 	// Destructor
@@ -93,6 +94,7 @@ public:
 private:
 	const size_t DEFAULT_SIZE = 10;
 	const size_t UPDATE_FACTOR = 2;
+
 	size_t capacity_;
 	size_t size_;
 	T *data_;
@@ -108,6 +110,21 @@ private:
 
 		delete[] data_;
 		data_ = tempData;
+	}
+
+	void prune_capacity() {
+		if (capacity_ > DEFAULT_SIZE && size_ <= capacity_/ (UPDATE_FACTOR*UPDATE_FACTOR)) {
+
+			capacity_ /= UPDATE_FACTOR;
+			T* tempData = new T[capacity_];
+
+			for (int i = 0; i < size_; i++) {
+				tempData[i] = data_[i];
+			}
+
+			delete[] data_;
+			data_ = tempData;
+		}
 	}
 };
 
