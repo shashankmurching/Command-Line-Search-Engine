@@ -6,22 +6,34 @@
 
 using namespace SL;
 
-void test_basic_const();
-void test_fill_const();
-void test_copy_const();
+void test_basic_constr();
+void test_fill_constr();
+void test_copy_constr();
+
+void test_size();
+void test_capacity();
+void test_empty();
 
 
 int main() {
-	test_basic_const();
-	test_fill_const();
-	test_copy_const();
+	// Test constructors
+	test_basic_constr();
+	test_fill_constr();
+	test_copy_constr();
+
+	// Test Capactiy
+	test_size();
+	test_capacity();
+	test_empty();
+
 	
 
 	return 0;
 }
 
+// Test Constructors
 
-void test_basic_const() {
+void test_basic_constr() {
 	printf("Testing basic constructor\n");
 
 	vector<int> vec1;
@@ -32,7 +44,7 @@ void test_basic_const() {
 	printf("Passed!\n");
 }
 
-void test_fill_const() {
+void test_fill_constr() {
 	printf("Testing fill constructor\n");
 
 	int vecSize = 4;
@@ -50,7 +62,7 @@ void test_fill_const() {
 	printf("Passed!\n");
 }
 
-void test_copy_const() {
+void test_copy_constr() {
 	printf("Testing copy constructor\n");
 	
 	int vecSize = 4;
@@ -69,3 +81,40 @@ void test_copy_const() {
 	
 	printf("Passed!\n");
 }
+
+// Test Capacity
+
+void test_size() {
+	printf("Testing size\n");
+
+	vector<int> vec;
+	assert(vec.size() == 0);
+
+	int size = 30;
+
+	for (int i = 1; i <= size; i++) {
+		vec.push_back(i);
+		assert(vec.size() == i);
+	}
+
+	for (int i = size - 1; i >= 0; i--) {
+		vec.pop_back();
+		assert(vec.size() == i);
+	}
+
+	printf("Passed!\n");
+}
+
+void test_capacity() {
+	printf("Testing capacity\n");
+
+	printf("Passed!\n");
+}
+
+void test_empty() {
+	printf("Testing Empty\n");
+
+	printf("Passed!\n");
+}
+
+// Test Accessors

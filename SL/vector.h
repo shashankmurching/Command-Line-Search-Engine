@@ -81,7 +81,7 @@ public:
 		size_++;
 	}
 
-	void pop_back(T val) {
+	void pop_back() {
 		size_--;
 	}
 
