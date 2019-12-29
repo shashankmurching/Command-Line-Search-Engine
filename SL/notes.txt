@@ -3,3 +3,11 @@ To Implement:
 	Map
 	Hash Map
 	Priority Queue
+
+
+
+Should add:
+	More vector functions like resize / reserve
+	Fully fleshed test cases
+	Makefile functionality to run tests
+	Class just for error handling
