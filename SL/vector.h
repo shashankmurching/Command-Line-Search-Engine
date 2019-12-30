@@ -54,7 +54,7 @@ public:
 	}
 
 	void resize(unsigned long n, const T& val) {
-		if (n < capacity_) {
+		if (n < size_) {
 			capacity_ = n;
 			size_ = n;
 			T* temp_data = new T[capacity_];

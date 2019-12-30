@@ -13,6 +13,9 @@ void test_copy_constr();
 void test_size();
 void test_capacity();
 void test_empty();
+void test_resize();
+void test_resize_val();
+void test_reserve();
 
 void test_index_operator();
 void test_at();
@@ -46,6 +49,9 @@ int main() {
 	test_size();
 	test_capacity();
 	test_empty();
+	test_resize();
+	test_resize_val();
+	test_reserve();
 
 	// Test Accessors
 	test_index_operator();
@@ -219,6 +225,158 @@ void test_empty() {
 
 			vector<int> copy(vec);
 			assert(!copy.empty());
+		}
+	}
+
+	printf("Passed!\n");
+}
+
+void test_resize() {
+	printf("Testing resize()\n");
+
+	{
+		vector<int> vec;
+		assert(vec.capacity() == default_size);
+		assert(vec.empty());
+
+		vec.resize(0);
+		assert(vec.capacity() == default_size);
+		assert(vec.empty());
+
+		int resize_max = 30;
+
+		for (int i = 1; i <= resize_max; i++) {
+			vec.resize(i);
+
+			int calc_capacity = (i < 10) ? 10 : i;
+			assert(vec.capacity() == calc_capacity);
+			assert(vec.size() == i);
+
+			for (int j = 0; j < i; j++) {
+				assert(vec[j] == 0);
+			}
+		}
+
+		for (int i = resize_max; i >= 0; i--) {
+			vec.resize(i);
+			assert(vec.capacity() == i);
+			assert(vec.size() == i);
+
+			for (int j = 0; j < i; j++) {
+				assert(vec[j] == 0);
+			}
+		}
+	} 
+
+	{
+		vector<int> vec;
+
+		int resize_length = 5;
+		vec.resize(resize_length);
+
+		assert(vec.size() == 5);
+		assert(vec.capacity() == default_size);
+	}
+
+	printf("Passed!\n");
+}
+
+void test_resize_val() {
+	printf("Testing resize(T)\n");
+
+	{
+		vector<int> vec;
+		assert(vec.capacity() == default_size);
+		assert(vec.empty());
+
+		vec.resize(0, 1);
+		assert(vec.capacity() == default_size);
+		assert(vec.empty());
+
+		int resize_max = 30;
+
+		for (int i = 1; i <= resize_max; i++) {
+			vec.resize(i, i);
+
+			int calc_capacity = (i < 10) ? 10 : i;
+			assert(vec.capacity() == calc_capacity);
+			assert(vec.size() == i);
+
+			for (int j = 0; j < i; j++) {
+				assert(vec[j] == j + 1);
+			}
+		}
+
+		for (int i = resize_max; i >= 0; i--) {
+			vec.resize(i, i);
+			assert(vec.capacity() == i);
+			assert(vec.size() == i);
+
+			for (int j = 0; j < i; j++) {
+				assert(vec[j] == j + 1);
+			}
+		}
+	} 
+
+	{
+		vector<int> vec;
+
+		int resize_length = 5;
+		vec.resize(resize_length, 1);
+
+		assert(vec.size() == 5);
+		assert(vec.capacity() == default_size);
+
+		for (int i = 0; i < resize_length; i++) {
+			assert(vec[i] == 1);
+		}
+	}
+
+	printf("Passed!\n");
+}
+
+void test_reserve() {
+	printf("Testing reserve()\n");
+
+	{
+		vector<int> vec;
+
+		for (int i = 0; i <= default_size; i++) {
+			vec.reserve(i);
+			assert(vec.capacity() == default_size);
+		}
+
+		for (int i = default_size; i < 20; i++) {
+			vec.reserve(i);
+			assert(vec.capacity() == i);
+		}		
+	}
+
+	{
+		vector<int> vec;
+
+		int val_count = 35;
+		int upper_bound = 40;
+		int reserve_bound = 50;
+
+		for (int i = 0; i < val_count; i++) {
+			vec.push_back(i);
+		}
+		
+		assert(vec.capacity() == upper_bound);
+		assert(vec.size() == val_count);
+
+
+		for (int i = default_size; i < reserve_bound; i++) {
+			int calc_capacity = (i < upper_bound) ? upper_bound : i;
+			vec.reserve(i);
+
+			assert(vec.capacity() == calc_capacity);
+			assert(vec.size() == val_count);
+
+			for (int j = 0; j < val_count; j++) {
+				assert(vec[j] == j);
+			}
 		}
 	}
 
