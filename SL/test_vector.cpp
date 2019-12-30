@@ -24,6 +24,12 @@ void test_pop_back();
 
 void test_destructor();
 
+enum Func { op, at, front, back };
+
+template<class T>
+void index_error_checker(Func type, vector<T> vec, unsigned long index = 0);
+
+
 const unsigned long default_size = 10;
 const unsigned long update_factor = 2;
 
@@ -224,11 +230,35 @@ void test_empty() {
 void test_index_operator() {
 	printf("Testing operator[]\n");
 
+	vector<int> vec;
+
+	index_error_checker(op, vec, -1);
+	index_error_checker(op, vec, 0);
+	index_error_checker(op, vec, -1);
+
+	for (int i = 0; i < 50; i++) {
+		vec.push_back(i);
+		assert(vec[i] == i);
+		index_error_checker(op, vec, i + 1);
+	}
+
 	printf("Passed!\n");
 }
 
 void test_at() {
 	printf("Testing at()\n");
+
+	vector<int> vec;
+
+	index_error_checker(at, vec, -1);
+	index_error_checker(at, vec, 0);
+	index_error_checker(at, vec, -1);
+
+	for (int i = 0; i < 50; i++) {
+		vec.push_back(i);
+		assert(vec.at(i) == i);
+		index_error_checker(at, vec, i + 1);
+	}
 
 	printf("Passed!\n");
 }
@@ -236,11 +266,46 @@ void test_at() {
 void test_front() {
 	printf("Testing front()\n");
 
+	vector<int> vec;
+
+	index_error_checker(front, vec);
+
+	for (int i = 0; i < 50; i++) {
+		vec.push_back(i);
+		assert(vec.front() == 0);
+	}
+
+	for (int i = 1; i < 50; i++) {
+		vec.pop_back();
+		assert(vec.front() == 0);
+	}
+
+	vec.pop_back();
+	index_error_checker(front, vec);
+
 	printf("Passed!\n");
 }
 
 void test_back() {
 	printf("Testing back()\n");
+
+	vector<int> vec;
+
+	index_error_checker(back, vec);
+
+	for (int i = 0; i < 50; i++) {
+		vec.push_back(i);
+		assert(vec.back() == i);
+	}
+
+	for (int i = 49; i > 0; i--) {
+		assert(vec.back() == i);
+		vec.pop_back();
+		assert(vec.back() == i - 1);
+	}
+
+	vec.pop_back();
+	index_error_checker(back, vec);
 
 	printf("Passed!\n");
 }
@@ -250,11 +315,48 @@ void test_back() {
 void test_push_back() {
 	printf("Testing push_back()\n");
 
+	{
+		vector<int> vec;
+		int size = 0;
+
+		for (int i = 0; i < 10; i++) {
+			vec.push_back(i);
+			assert(vec[i] == i);
+			assert(vec.size() == size + 1);
+			size += 1;
+		}
+	}
+
+	{
+		int vec_size = default_size;
+		vector<int> vec(vec_size, 0);
+		vec.push_back(1);
+		assert(vec[vec_size] == 1);
+	}
+
 	printf("Passed!\n");
 }
 
 void test_pop_back() {
 	printf("Testing pop_back()\n");
+
+	// Functionality is also tested through test_size() and test_capacity()
+	vector<int> vec(default_size, 1);
+
+	for (int i = 10; i > 0; i--) {
+		assert(vec.size() == i);
+		vec.pop_back();
+		assert(vec.size() == i - 1);
+	}
+
+	assert(vec.empty());
+
+	try {
+		vec.pop_back();
+		assert(false);
+	} catch (...) { // Change to specific error class
+		assert(true);
+	}
 
 	printf("Passed!\n");
 }
@@ -267,3 +369,25 @@ void test_destructor() {
 	printf("Passed!\n");
 }
 
+template<class T>
+void index_error_checker(Func type, vector<T> vec, unsigned long index) {
+	try {
+		int val = 0;
+		switch(type) {
+			case op:
+				val = vec[index];
+				break;
+			case at:
+				val = vec.at(index);
+				break;
+			case front:
+				val = vec.front();
+				break;
+			case back:
+				val = vec.back();
+		}
+		assert(false);
+	} catch (...) {
+		assert(true);
+	}
+}
