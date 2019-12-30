@@ -3,8 +3,6 @@
 #ifndef SL_VECTOR_H
 #define SL_VECTOR_H
 
-#include <stddef.h>
-
 namespace SL {
 
 template<class T> 
@@ -27,7 +25,7 @@ public:
 		}		
 	}
 
-	vector(size_t length, T val) {
+	vector(unsigned long length, T val) {
 		capacity_ = length;
 		size_ = length;
 		data_ = new T[capacity_];
@@ -38,11 +36,12 @@ public:
 	}
 
 	// Capacity
-	size_t size() {
+	unsigned long size() {
 		return size_;
 	}
 	
-	size_t capacity() {
+	unsigned long
+	 capacity() {
 		return capacity_;
 	}
 	
@@ -51,11 +50,13 @@ public:
 	}
 
 	// Accessors
-	T& operator[](size_t index) {
+	T& operator[](unsigned long
+	 index) {
 		return vector<T>::at(index);
 	}
 
-	T& at(size_t index) {
+	T& at(unsigned long
+	 index) {
 		if (index >= size_) {
 			// TODO: Should swap out with exception class
 			throw "Out of range exception!";
@@ -93,11 +94,15 @@ public:
 	}
 
 private:
-	const size_t DEFAULT_SIZE = 10;
-	const size_t UPDATE_FACTOR = 2;
+	const unsigned long
+	 DEFAULT_SIZE = 10;
+	const unsigned long
+	 UPDATE_FACTOR = 2;
 
-	size_t capacity_;
-	size_t size_;
+	unsigned long
+	 capacity_;
+	unsigned long
+	 size_;
 	T *data_;
 
 
