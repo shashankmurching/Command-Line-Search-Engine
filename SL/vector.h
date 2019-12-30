@@ -48,6 +48,60 @@ public:
 		return size_ == 0;
 	}
 
+	void resize(unsigned long n) {
+		T def_val = T{};
+		resize(n, def_val);
+	}
+
+	void resize(unsigned long n, const T& val) {
+		if (n < capacity_) {
+			capacity_ = n;
+			size_ = n;
+			T* temp_data = new T[capacity_];
+
+			for (int i = 0; i < n; i++) {
+				temp_data[i] = data_[i];
+			}
+
+			delete[] data_;
+			data_ = temp_data;
+		
+		} else if (n > size_) {
+			if (n > capacity_) {
+				capacity_ = n;
+				T* temp_data = new T[capacity_];
+
+				for (int i = 0; i < size_; i++) {
+					temp_data[i] = data_[i];
+				}
+
+				delete[] data_;
+				data_ = temp_data;
+			}
+			
+			for (int i = size_; i < n; i++) {
+				data_[i] = val;
+			}
+
+			size_ = n;
+		}
+	}
+
+	void reserve(unsigned long n) {
+		if (n > capacity_) {
+			capacity_ = n;
+			T* temp_data = new T[capacity_];
+
+			for (int i = 0; i < size_; i++) {
+				temp_data[i] = data_[i];
+			}
+
+			delete[] data_;
+			data_ = temp_data;
+		}
+	}
+
+
 	// Accessors
 	T& operator[](unsigned long index) {
 		return vector<T>::at(index);
