@@ -101,29 +101,39 @@ private:
 
 
 	void increase_capacity() {
-		capacity_ *= UPDATE_FACTOR;
-		T* tempData = new T[capacity_];
+		int lower_bound = DEFAULT_SIZE;
+
+		while (lower_bound <= capacity_) {
+			lower_bound *= UPDATE_FACTOR;
+
+			if (lower_bound > capacity_) {
+				break;
+			}
+		}
+
+		capacity_ = lower_bound;
+		T* temp_data = new T[capacity_];
 
 		for (int i = 0; i < size_; i++) {
-			tempData[i] = data_[i];
+			temp_data[i] = data_[i];
 		}
 
 		delete[] data_;
-		data_ = tempData;
+		data_ = temp_data;
 	}
 
 	void prune_capacity() {
 		if (capacity_ > DEFAULT_SIZE && size_ <= capacity_/ (UPDATE_FACTOR*UPDATE_FACTOR)) {
 
 			capacity_ /= UPDATE_FACTOR;
-			T* tempData = new T[capacity_];
+			T* temp_data = new T[capacity_];
 
 			for (int i = 0; i < size_; i++) {
-				tempData[i] = data_[i];
+				temp_data[i] = data_[i];
 			}
 
 			delete[] data_;
-			data_ = tempData;
+			data_ = temp_data;
 		}
 	}
 };

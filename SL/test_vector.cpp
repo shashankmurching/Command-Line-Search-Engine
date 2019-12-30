@@ -15,6 +15,10 @@ void test_capacity();
 void test_empty();
 
 
+const unsigned long default_size = 10;
+const unsigned long update_factor = 2;
+
+
 int main() {
 	// Test constructors
 	test_basic_constr();
@@ -38,7 +42,7 @@ void test_basic_constr() {
 
 	vector<int> vec1;
 	assert(vec1.size() == 0);
-	assert(vec1.capacity() == 10);
+	assert(vec1.capacity() == default_size);
 	assert(vec1.empty());
 
 	printf("Passed!\n");
@@ -107,6 +111,35 @@ void test_size() {
 
 void test_capacity() {
 	printf("Testing capacity\n");
+	{
+		vector<int> vec;
+		assert(vec.capacity() == default_size);
+
+		for (int i = 0; i < 10; i++) {
+			int increase_factor = 1 << i;
+			int current_size = vec.size();
+
+			for (int j = current_size; j < default_size * increase_factor; j++) {
+				vec.push_back(1);
+				assert(vec.capacity() == default_size * increase_factor);
+			}
+		}
+
+		for (int i = 0; i < 10; i++) {
+			int lower_bound = vec.capacity() / (update_factor * update_factor);
+			int current_size = vec.size();
+			int current_capacity = vec.capacity();
+
+			for (int j = current_size; j >= lower_bound; j--) {
+				vec.pop_back();
+				int calc_capacity = (current_capacity > default_size && vec.size() <= lower_bound) 
+										? current_capacity / update_factor
+										: current_capacity;
+
+				assert(vec.capacity() == calc_capacity);
+			}
+		}
+	}
 
 	printf("Passed!\n");
 }
