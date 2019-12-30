@@ -164,6 +164,34 @@ void test_capacity() {
 
 void test_empty() {
 	printf("Testing Empty\n");
+	
+	{
+		vector<int> vec;
+		assert(vec.empty());
+
+		for (int i = 0; i < 10; i++) {
+			vec.push_back(i);
+			assert(!vec.empty());
+		}
+
+		for (int i = 1; i < 10; i++) {
+			vec.pop_back();
+			assert(!vec.empty());
+		}
+
+		vec.pop_back();
+		assert(vec.empty());
+	}
+
+	{
+		for (int i = 0; i < 10; i++) {
+			vector<int> vec(1, i);
+			assert(!vec.empty());
+
+			vector<int> copy(vec);
+			assert(!copy.empty());
+		}
+	}
 
 	printf("Passed!\n");
 }
