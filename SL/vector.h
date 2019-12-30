@@ -105,10 +105,6 @@ private:
 
 		while (lower_bound <= capacity_) {
 			lower_bound *= UPDATE_FACTOR;
-
-			if (lower_bound > capacity_) {
-				break;
-			}
 		}
 
 		capacity_ = lower_bound;
