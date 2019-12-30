@@ -14,12 +14,23 @@ void test_size();
 void test_capacity();
 void test_empty();
 
+void test_index_operator();
+void test_at();
+void test_front();
+void test_back();
+
+void test_push_back();
+void test_pop_back();
+
+void test_destructor();
 
 const unsigned long default_size = 10;
 const unsigned long update_factor = 2;
 
 
 int main() {
+	printf("Running vector test cases\n");
+
 	// Test constructors
 	test_basic_constr();
 	test_fill_constr();
@@ -30,8 +41,20 @@ int main() {
 	test_capacity();
 	test_empty();
 
-	
+	// Test Accessors
+	test_index_operator();
+	test_at();
+	test_front();
+	test_back();
 
+	// Test Modifiers
+	test_push_back();
+	test_pop_back();
+
+	// Test Destructor
+	test_destructor();
+
+	printf("All vector test cases passed!\n");
 	return 0;
 }
 
@@ -89,7 +112,7 @@ void test_copy_constr() {
 // Test Capacity
 
 void test_size() {
-	printf("Testing size\n");
+	printf("Testing size()\n");
 
 	vector<int> vec;
 	assert(vec.size() == 0);
@@ -110,7 +133,7 @@ void test_size() {
 }
 
 void test_capacity() {
-	printf("Testing capacity\n");
+	printf("Testing capacity()\n");
 	{
 		vector<int> vec;
 		assert(vec.capacity() == default_size);
@@ -163,7 +186,7 @@ void test_capacity() {
 }
 
 void test_empty() {
-	printf("Testing Empty\n");
+	printf("Testing empty()\n");
 	
 	{
 		vector<int> vec;
@@ -197,3 +220,50 @@ void test_empty() {
 }
 
 // Test Accessors
+
+void test_index_operator() {
+	printf("Testing operator[]\n");
+
+	printf("Passed!\n");
+}
+
+void test_at() {
+	printf("Testing at()\n");
+
+	printf("Passed!\n");
+}
+
+void test_front() {
+	printf("Testing front()\n");
+
+	printf("Passed!\n");
+}
+
+void test_back() {
+	printf("Testing back()\n");
+
+	printf("Passed!\n");
+}
+
+// Testing Modifiers
+
+void test_push_back() {
+	printf("Testing push_back()\n");
+
+	printf("Passed!\n");
+}
+
+void test_pop_back() {
+	printf("Testing pop_back()\n");
+
+	printf("Passed!\n");
+}
+
+// Testing Destructor
+
+void test_destructor() {
+	printf("Testing ~vector()\n");
+
+	printf("Passed!\n");
+}
+

@@ -1,13 +1,15 @@
 To Implement:
+	String library
 	Vector
 	Map
 	Hash Map
 	Priority Queue
 
+	Channels from Golang
 
 
 Should add:
 	More vector functions like resize / reserve
 	Fully fleshed test cases
 	Makefile functionality to run tests
-	Class just for error handling
+	Class just for error handling after string library

@@ -89,6 +89,7 @@ public:
 	// Destructor
 	~vector() {
 		delete[] data_;
+		data_ = nullptr;
 	}
 
 private:
