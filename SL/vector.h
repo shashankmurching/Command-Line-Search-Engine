@@ -40,8 +40,7 @@ public:
 		return size_;
 	}
 	
-	unsigned long
-	 capacity() {
+	unsigned long capacity() {
 		return capacity_;
 	}
 	
@@ -50,13 +49,11 @@ public:
 	}
 
 	// Accessors
-	T& operator[](unsigned long
-	 index) {
+	T& operator[](unsigned long index) {
 		return vector<T>::at(index);
 	}
 
-	T& at(unsigned long
-	 index) {
+	T& at(unsigned long index) {
 		if (index >= size_) {
 			// TODO: Should swap out with exception class
 			throw "Out of range exception!";
@@ -83,6 +80,9 @@ public:
 	}
 
 	void pop_back() {
+		if (empty()) {
+			throw "Cannot pop_back on empty vector!";
+		}
 		size_--;
 		prune_capacity();
 	}
@@ -94,15 +94,11 @@ public:
 	}
 
 private:
-	const unsigned long
-	 DEFAULT_SIZE = 10;
-	const unsigned long
-	 UPDATE_FACTOR = 2;
+	const unsigned long DEFAULT_SIZE = 10;
+	const unsigned long UPDATE_FACTOR = 2;
 
-	unsigned long
-	 capacity_;
-	unsigned long
-	 size_;
+	unsigned long capacity_;
+	unsigned long size_;
 	T *data_;
 
 
