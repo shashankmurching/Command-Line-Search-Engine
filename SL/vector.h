@@ -147,6 +147,53 @@ public:
 		data_ = nullptr;
 	}
 
+	class Iterator {
+	public:
+		Iterator() : data_(nullptr), capacity_(0), index_(0) {}
+
+		Iterator& operator++() {
+			Iterator itr(data_, capacity_, index_ + 1);
+			return itr;
+		}
+
+		bool operator==(const Iterator &other) {
+			return data_ == other.data_ 
+					&& capacity_ == other.capacity_ 
+					&& index_ == other.index_;
+		}
+
+		bool operator!=(const Iterator &other) {
+			return !(this == other);
+		}
+
+		T operator*() {
+			if (data_ == nullptr || index_ >= capacity_) {
+				throw "Dereferencing vector iterator out of bounds";
+			}
+			return data_[index_];
+		}
+
+	private:
+		unsigned long capacity_;
+		unsigned long index_;
+		T* data_[];
+
+		Iterator(T* data, unsigned long capacity, unsigned long index) : 
+				data_(data), capacity_(capacity), index_(index) {}
+
+		friend class Iterator;
+	};
+
+
+	Iterator begin() {
+		return Iterator(data_, capacity_, 0);
+	}
+
+	Iterator end() {
+		return Iterator();
+	}
+
+
 private:
 	const unsigned long DEFAULT_SIZE = 10;
 	const unsigned long UPDATE_FACTOR = 2;
