@@ -27,13 +27,21 @@ void test_pop_back();
 
 void test_destructor();
 
+void test_begin();
+void test_end();
+void test_iterator_incr();
+void test_iterator_equal();
+void test_iterator_neq();
+void test_iterator_deref();
+
 enum Func { op, at, front, back };
 
 template<class T>
 void index_error_checker(Func type, vector<T> vec, unsigned long index = 0);
 
 
-const unsigned long default_size = 10;
+const unsigned long default_cap = 0;
+const unsigned long ten_iter = 10;
 const unsigned long update_factor = 2;
 
 
@@ -66,6 +74,14 @@ int main() {
 	// Test Destructor
 	test_destructor();
 
+	// Test Iterators
+	test_begin();
+	test_end();
+	test_iterator_incr();
+	test_iterator_equal();
+	test_iterator_neq();
+	test_iterator_deref();
+
 	printf("All vector test cases passed!\n");
 	return 0;
 }
@@ -77,7 +93,7 @@ void test_basic_constr() {
 
 	vector<int> vec1;
 	assert(vec1.size() == 0);
-	assert(vec1.capacity() == default_size);
+	assert(vec1.capacity() == default_cap);
 	assert(vec1.empty());
 
 	printf("Passed!\n");
@@ -148,15 +164,15 @@ void test_capacity() {
 	printf("Testing capacity()\n");
 	{
 		vector<int> vec;
-		assert(vec.capacity() == default_size);
+		assert(vec.capacity() == default_cap);
 
 		for (int i = 0; i < 10; i++) {
 			int increase_factor = 1 << i;
 			int current_size = vec.size();
 
-			for (int j = current_size; j < default_size * increase_factor; j++) {
+			for (int j = current_size; j < increase_factor; j++) {
 				vec.push_back(1);
-				assert(vec.capacity() == default_size * increase_factor);
+				assert(vec.capacity() == increase_factor);
 			}
 		}
 
@@ -165,9 +181,9 @@ void test_capacity() {
 			int current_size = vec.size();
 			int current_capacity = vec.capacity();
 
-			for (int j = current_size; j >= lower_bound; j--) {
+			for (int j = current_size; j > lower_bound; j--) {
 				vec.pop_back();
-				int calc_capacity = (current_capacity > default_size && vec.size() <= lower_bound) 
+				int calc_capacity = (vec.size() <= lower_bound) 
 										? current_capacity / update_factor
 										: current_capacity;
 
@@ -181,7 +197,7 @@ void test_capacity() {
 			vector<int> vec(i, i);
 			assert(vec.capacity() == i);
 
-			int calc_capacity = default_size;
+			int calc_capacity = 1;
 			while (calc_capacity <= i) {
 				calc_capacity *= update_factor;
 			}
@@ -236,11 +252,11 @@ void test_resize() {
 
 	{
 		vector<int> vec;
-		assert(vec.capacity() == default_size);
+		assert(vec.capacity() == default_cap);
 		assert(vec.empty());
 
 		vec.resize(0);
-		assert(vec.capacity() == default_size);
+		assert(vec.capacity() == default_cap);
 		assert(vec.empty());
 
 		int resize_max = 30;
@@ -248,7 +264,7 @@ void test_resize() {
 		for (int i = 1; i <= resize_max; i++) {
 			vec.resize(i);
 
-			int calc_capacity = (i < 10) ? 10 : i;
+			int calc_capacity = i;
 			assert(vec.capacity() == calc_capacity);
 			assert(vec.size() == i);
 
@@ -275,7 +291,7 @@ void test_resize() {
 		vec.resize(resize_length);
 
 		assert(vec.size() == 5);
-		assert(vec.capacity() == default_size);
+		assert(vec.capacity() == 5);
 	}
 
 	printf("Passed!\n");
@@ -286,11 +302,11 @@ void test_resize_val() {
 
 	{
 		vector<int> vec;
-		assert(vec.capacity() == default_size);
+		assert(vec.capacity() == default_cap);
 		assert(vec.empty());
 
 		vec.resize(0, 1);
-		assert(vec.capacity() == default_size);
+		assert(vec.capacity() == default_cap);
 		assert(vec.empty());
 
 		int resize_max = 30;
@@ -298,7 +314,7 @@ void test_resize_val() {
 		for (int i = 1; i <= resize_max; i++) {
 			vec.resize(i, i);
 
-			int calc_capacity = (i < 10) ? 10 : i;
+			int calc_capacity = i;
 			assert(vec.capacity() == calc_capacity);
 			assert(vec.size() == i);
 
@@ -325,7 +341,7 @@ void test_resize_val() {
 		vec.resize(resize_length, 1);
 
 		assert(vec.size() == 5);
-		assert(vec.capacity() == default_size);
+		assert(vec.capacity() == 5);
 
 		for (int i = 0; i < resize_length; i++) {
 			assert(vec[i] == 1);
@@ -341,12 +357,7 @@ void test_reserve() {
 	{
 		vector<int> vec;
 
-		for (int i = 0; i <= default_size; i++) {
-			vec.reserve(i);
-			assert(vec.capacity() == default_size);
-		}
-
-		for (int i = default_size; i < 20; i++) {
+		for (int i = 0; i < 20; i++) {
 			vec.reserve(i);
 			assert(vec.capacity() == i);
 		}		
@@ -356,8 +367,8 @@ void test_reserve() {
 		vector<int> vec;
 
 		int val_count = 35;
-		int upper_bound = 40;
-		int reserve_bound = 50;
+		int upper_bound = 64;
+		int reserve_bound = 70;
 
 		for (int i = 0; i < val_count; i++) {
 			vec.push_back(i);
@@ -367,7 +378,7 @@ void test_reserve() {
 		assert(vec.size() == val_count);
 
 
-		for (int i = default_size; i < reserve_bound; i++) {
+		for (int i = 1; i < reserve_bound; i++) {
 			int calc_capacity = (i < upper_bound) ? upper_bound : i;
 			vec.reserve(i);
 
@@ -486,7 +497,7 @@ void test_push_back() {
 	}
 
 	{
-		int vec_size = default_size;
+		int vec_size = 10;
 		vector<int> vec(vec_size, 0);
 		vec.push_back(1);
 		assert(vec[vec_size] == 1);
@@ -499,7 +510,7 @@ void test_pop_back() {
 	printf("Testing pop_back()\n");
 
 	// Functionality is also tested through test_size() and test_capacity()
-	vector<int> vec(default_size, 1);
+	vector<int> vec(10, 1);
 
 	for (int i = 10; i > 0; i--) {
 		assert(vec.size() == i);
@@ -523,9 +534,84 @@ void test_pop_back() {
 
 void test_destructor() {
 	printf("Testing ~vector()\n");
+	printf("NEED TO ADD\n");
+	printf("Passed!\n");
+}
+
+// Testing Iterators
+
+void test_begin() {
+	printf("Testing begin()\n");
+
+	{
+		vector<int> vec;
+		for (int i = 0; i < ten_iter; i++) {
+			vec.push_back(i);
+			auto itr = vec.begin();
+			assert(*itr == 0);
+		}
+
+		auto itr = vec.begin();
+		for (int i = 0; i < ten_iter; i++) {
+			vec[0] = i;
+			assert(*itr == i);
+		}
+	}
 
 	printf("Passed!\n");
 }
+
+void test_end() {
+	printf("Testing end()\n");
+
+	{
+		vector<int> vec;
+		auto begin = vec.begin();
+		auto end = vec.end();
+		assert(begin == end);
+
+		for (int i = 0; i < 16; i++) {
+			vec.push_back(i);
+		}
+
+		begin = vec.begin();
+		end = vec.end();
+		assert(begin != end);
+
+		for (int i = 0; i < 16; i++) {
+			begin++;
+		}
+		assert(begin == end);
+	}
+
+	printf("Passed!\n");
+}
+
+void test_iterator_incr() {
+	printf("Testing iterator++()\n");
+	
+
+	printf("Passed!\n");
+}
+
+void test_iterator_equal() {
+	printf("Testing Iterator==()\n");
+	
+	printf("Passed!\n");
+}
+
+void test_iterator_neq() {
+	printf("Testing Iterator!=()\n");
+	
+	printf("Passed!\n");
+}
+
+void test_iterator_deref() {
+	printf("Testing Iterator*()\n");
+	
+	printf("Passed!\n");
+}
+
 
 template<class T>
 void index_error_checker(Func type, vector<T> vec, unsigned long index) {

@@ -3,6 +3,8 @@
 #ifndef SL_VECTOR_H
 #define SL_VECTOR_H
 
+#include <stdio.h>
+
 namespace SL {
 
 template<class T> 
@@ -10,7 +12,7 @@ class vector {
 public:
 	// Constructors
 	vector() {
-		capacity_ = DEFAULT_SIZE;
+		capacity_ = 0;
 		size_ = 0;
 		data_ = new T[capacity_];
 	}
@@ -169,6 +171,8 @@ public:
 		}
 
 		bool operator==(const Iterator &other) {
+			printf("index: %lu adn other index: %lu\n", index_, other.index_);
+
 			return data_ == other.data_ 
 					&& capacity_ == other.capacity_ 
 					&& index_ == other.index_;
@@ -207,7 +211,7 @@ public:
 
 
 private:
-	const unsigned long DEFAULT_SIZE = 10;
+	const unsigned long LOWEST_SIZE = 1;
 	const unsigned long UPDATE_FACTOR = 2;
 
 	unsigned long capacity_;
@@ -216,7 +220,7 @@ private:
 
 
 	void increase_capacity() {
-		int lower_bound = DEFAULT_SIZE;
+		int lower_bound = LOWEST_SIZE;
 
 		while (lower_bound <= capacity_) {
 			lower_bound *= UPDATE_FACTOR;
@@ -234,7 +238,7 @@ private:
 	}
 
 	void prune_capacity() {
-		if (capacity_ > DEFAULT_SIZE && size_ <= capacity_/ (UPDATE_FACTOR*UPDATE_FACTOR)) {
+		if (capacity_ > LOWEST_SIZE && size_ <= capacity_/ (UPDATE_FACTOR*UPDATE_FACTOR)) {
 
 			capacity_ /= UPDATE_FACTOR;
 			T* temp_data = new T[capacity_];
