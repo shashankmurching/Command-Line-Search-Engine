@@ -151,9 +151,21 @@ public:
 	public:
 		Iterator() : data_(nullptr), capacity_(0), index_(0) {}
 
+		// Pre increment op
+		//increment before doing op
+
 		Iterator& operator++() {
-			Iterator itr(data_, capacity_, index_ + 1);
-			return itr;
+			index_ += 1;
+			return *this;
+		}
+
+		// Post increment
+		// increment after doing op
+
+		Iterator operator++(int) {
+			Iterator temp(data_, capacity_, index_);
+			index_ += 1;
+			return temp;
 		}
 
 		bool operator==(const Iterator &other) {
@@ -163,7 +175,7 @@ public:
 		}
 
 		bool operator!=(const Iterator &other) {
-			return !(this == other);
+			return !(*this == other);
 		}
 
 		T operator*() {
@@ -176,12 +188,12 @@ public:
 	private:
 		unsigned long capacity_;
 		unsigned long index_;
-		T* data_[];
+		T* data_;
 
 		Iterator(T* data, unsigned long capacity, unsigned long index) : 
-				data_(data), capacity_(capacity), index_(index) {}
+				capacity_(capacity), index_(index), data_(data) {}
 
-		friend class Iterator;
+		friend class vector;
 	};
 
 
@@ -190,7 +202,7 @@ public:
 	}
 
 	Iterator end() {
-		return Iterator();
+		return Iterator(data_, capacity_, capacity_);
 	}
 
 
