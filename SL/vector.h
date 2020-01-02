@@ -55,28 +55,12 @@ public:
 
 	void resize(unsigned long n, const T& val) {
 		if (n < size_) {
-			capacity_ = n;
 			size_ = n;
-			T* temp_data = new T[capacity_];
-
-			for (int i = 0; i < n; i++) {
-				temp_data[i] = data_[i];
-			}
-
-			delete[] data_;
-			data_ = temp_data;
+			update_capacity(n);
 		
 		} else if (n > size_) {
 			if (n > capacity_) {
-				capacity_ = n;
-				T* temp_data = new T[capacity_];
-
-				for (int i = 0; i < size_; i++) {
-					temp_data[i] = data_[i];
-				}
-
-				delete[] data_;
-				data_ = temp_data;
+				update_capacity(n);
 			}
 			
 			for (int i = size_; i < n; i++) {
@@ -89,15 +73,7 @@ public:
 
 	void reserve(unsigned long n) {
 		if (n > capacity_) {
-			capacity_ = n;
-			T* temp_data = new T[capacity_];
-
-			for (int i = 0; i < size_; i++) {
-				temp_data[i] = data_[i];
-			}
-
-			delete[] data_;
-			data_ = temp_data;
+			update_capacity(n);
 		}
 	}
 
@@ -209,6 +185,7 @@ public:
 private:
 	const unsigned long LOWEST_SIZE = 1;
 	const unsigned long UPDATE_FACTOR = 2;
+	const unsigned long OPTIMIZATION_FACTOR = 10;
 
 	unsigned long capacity_;
 	unsigned long size_;
@@ -216,37 +193,35 @@ private:
 
 
 	void increase_capacity() {
-		int lower_bound = LOWEST_SIZE;
+		update_capacity(lowest_higher_factor(capacity_));
+	}
 
-		while (lower_bound <= capacity_) {
+	void prune_capacity() {
+		if (capacity_ > LOWEST_SIZE && size_ <= capacity_/ (UPDATE_FACTOR*UPDATE_FACTOR)) {
+			update_capacity(capacity_ / UPDATE_FACTOR);
+		}
+	}
+
+	unsigned long lowest_higher_factor(unsigned long val) {
+		unsigned long lower_bound = LOWEST_SIZE;
+		while (lower_bound <= val) {
 			lower_bound *= UPDATE_FACTOR;
 		}
+		return lower_bound;
+	}
 
-		capacity_ = lower_bound;
+	void update_capacity(unsigned long new_capacity) {
+		capacity_ = new_capacity;
+
 		T* temp_data = new T[capacity_];
 
 		for (int i = 0; i < size_; i++) {
 			temp_data[i] = data_[i];
 		}
-
 		delete[] data_;
 		data_ = temp_data;
 	}
 
-	void prune_capacity() {
-		if (capacity_ > LOWEST_SIZE && size_ <= capacity_/ (UPDATE_FACTOR*UPDATE_FACTOR)) {
-
-			capacity_ /= UPDATE_FACTOR;
-			T* temp_data = new T[capacity_];
-
-			for (int i = 0; i < size_; i++) {
-				temp_data[i] = data_[i];
-			}
-
-			delete[] data_;
-			data_ = temp_data;
-		}
-	}
 };
 
 
