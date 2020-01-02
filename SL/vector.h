@@ -3,8 +3,6 @@
 #ifndef SL_VECTOR_H
 #define SL_VECTOR_H
 
-#include <stdio.h>
-
 namespace SL {
 
 template<class T> 
@@ -171,8 +169,6 @@ public:
 		}
 
 		bool operator==(const Iterator &other) {
-			printf("index: %lu adn other index: %lu\n", index_, other.index_);
-
 			return data_ == other.data_ 
 					&& capacity_ == other.capacity_ 
 					&& index_ == other.index_;

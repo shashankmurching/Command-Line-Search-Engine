@@ -589,7 +589,24 @@ void test_end() {
 
 void test_iterator_incr() {
 	printf("Testing iterator++()\n");
+
+	int vector_size = 10;
 	
+	{
+		vector<int> vec;
+		vec.reserve(vector_size);
+
+		for (int i = 0; i < vector_size; i++) {
+			vec.push_back(i);
+		}
+
+		auto itr = vec.begin();
+
+		for (int i = 0; i < vector_size; i++, itr++) {
+			assert(*itr == i);
+		}
+		assert(itr == vec.end());
+	}
 
 	printf("Passed!\n");
 }
@@ -597,18 +614,106 @@ void test_iterator_incr() {
 void test_iterator_equal() {
 	printf("Testing Iterator==()\n");
 	
+	{
+		vector<int> vec;
+		assert(vec.begin() == vec.end());
+	}
+
+	{
+		int vector_size = 10;
+		vector<int> vec;
+		vec.resize(vector_size);
+
+		auto itr = vec.begin();
+
+		for (int i = 0; i < vector_size; i++, itr++) {
+			assert(!(itr == vec.end()));
+		}
+		assert(itr == vec.end());
+	}
+
+
 	printf("Passed!\n");
 }
 
 void test_iterator_neq() {
 	printf("Testing Iterator!=()\n");
 	
+	{
+		vector<int> vec;
+		assert(!(vec.begin() != vec.end()));
+	}
+
+	{
+		int vector_size = 10;
+		vector<int> vec;
+		vec.resize(vector_size);
+
+		auto itr = vec.begin();
+
+		for (int i = 0; i < vector_size; i++, itr++) {
+			assert(itr != vec.end());
+		}
+		assert(!(itr != vec.end()));
+	}
+
 	printf("Passed!\n");
 }
 
 void test_iterator_deref() {
 	printf("Testing Iterator*()\n");
 	
+	{
+		vector<int> vec;
+		auto itr = vec.begin();
+		try {
+			*itr;
+			assert(false);
+		} catch (...) {
+			assert(true);
+		}
+		itr = vec.end();
+		try {
+			*itr;
+			assert(false);
+		} catch (...) {
+			assert(true);
+		}
+	}
+
+	{
+		int vector_size = 10;
+		vector<int> vec;
+		vec.reserve(vector_size);
+
+		for (int i = 0; i < vector_size; i++) {
+			vec.push_back(i);
+		}
+
+		int val = 0;
+		for (auto itr = vec.begin(); itr != vec.end(); itr++, val++) {
+			assert(*itr == val);
+		}
+	}
+
+	{
+		vector<int> vec;
+		vec.resize(1);
+		auto itr = vec.begin();
+		assert(*itr == 0);
+		assert(vec.capacity() == 1);
+		
+		itr++;
+		assert(itr == vec.end());		
+		
+		try {
+			*itr;
+			assert(false);
+		} catch (...) {
+			assert(true);
+		}
+	}
+
 	printf("Passed!\n");
 }
 
