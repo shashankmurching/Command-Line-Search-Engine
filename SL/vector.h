@@ -77,6 +77,14 @@ public:
 		}
 	}
 
+	void shrink_to_fit() {
+		if (capacity_ > 0 && size_ <= capacity_ - capacity_ / OPTIMIZATION_FACTOR) {			
+			unsigned long lower_bound = lowest_higher_factor(size_);
+			if (lower_bound < capacity_) {
+				update_capacity(lower_bound);
+			}
+		}
+	}
 
 	// Accessors
 	T& operator[](unsigned long index) {

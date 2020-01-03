@@ -16,6 +16,7 @@ void test_empty();
 void test_resize();
 void test_resize_val();
 void test_reserve();
+void test_shrink_to_fit();
 
 void test_index_operator();
 void test_at();
@@ -60,6 +61,7 @@ int main() {
 	test_resize();
 	test_resize_val();
 	test_reserve();
+	test_shrink_to_fit();
 
 	// Test Accessors
 	test_index_operator();
@@ -387,6 +389,72 @@ void test_reserve() {
 
 			for (int j = 0; j < val_count; j++) {
 				assert(vec[j] == j);
+			}
+		}
+	}
+
+	printf("Passed!\n");
+}
+
+void test_shrink_to_fit() {
+	printf("Testing shrink_to_fit()\n");
+
+	{
+		vector<int> vec;
+		assert(vec.capacity() == default_cap);
+		vec.shrink_to_fit();
+		assert(vec.capacity() == default_cap);
+	}
+
+	{
+		int vec_capacity = 100;
+		int vec_size = 90;
+
+		for (int i = vec_size; i < vec_capacity; i++) {
+			vector<int> vec;
+			vec.reserve(vec_capacity);
+			assert(vec.capacity() == vec_capacity);
+
+			for (int j = 0; j < vec_size; j++) {
+				vec.push_back(j);
+			}
+			assert(vec.capacity() == vec_capacity);
+			assert(vec.size() == vec_size);
+
+			vec.shrink_to_fit();
+			assert(vec.capacity() == vec_capacity);
+		}
+	}
+
+	{
+		int vec_capacity = 1024;
+
+		for (int i = 0; i < vec_capacity; i++) {
+			vector<int> vec;
+			assert(vec.capacity() == default_cap);
+			assert(vec.empty());
+
+			vec.reserve(vec_capacity);
+			assert(vec.capacity() == vec_capacity);
+			assert(vec.empty());
+
+			vec.resize(i);
+			assert(vec.capacity() == vec_capacity);
+			assert(vec.size() == i);
+
+			vec.shrink_to_fit();
+
+			unsigned long lower_bound = 1;
+			while (lower_bound <= i) {
+				lower_bound *= update_factor;
+			}
+
+			if (lower_bound < vec_capacity) {
+				assert(vec.capacity() == lower_bound);
+				assert(vec.size() == i);
+			} else {
+				assert(vec.capacity() == vec_capacity);
+				assert(vec.size() == i);				
 			}
 		}
 	}
