@@ -269,6 +269,35 @@ void test_end() {
 		assert(begin == end);
 	}
 
+	{
+		vector<int> vec;
+		assert(vec.begin() == vec.end());
+
+		unsigned long vec_capacity = 10;
+		vec.reserve(vec_capacity);
+		assert(vec.begin() == vec.end());
+	}
+
+	{
+		unsigned long vec_capacity = 10;
+		unsigned long vec_size = 5;
+		
+		vector<int> vec;
+		vec.reserve(vec_capacity);
+		assert(vec.begin() == vec.end());
+
+		populate_incr(vec, vec_size);
+
+		auto itr = vec.begin();
+		assert(itr != vec.end());
+
+		for (int i = 0; i < vec_size; i++) {
+			assert(itr++ != vec.end());
+		}
+		assert(itr == vec.end());
+	}
+
+
 	printf("Passed!\n");
 }
 

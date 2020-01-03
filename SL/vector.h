@@ -72,7 +72,7 @@ public:
 	}
 
 	Iterator end() {
-		return Iterator(data_, capacity_, capacity_);
+		return Iterator(data_, capacity_, size_);
 	}
 
 	// Iterator rbegin() {}
