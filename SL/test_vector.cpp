@@ -735,9 +735,27 @@ void test_iterator_incr() {
 		}
 
 		auto itr = vec.begin();
+		for (int i = 0; i < vector_size; i++) {
+			assert(*itr++ == i);
+		}
+		assert(itr == vec.end());
+	}
 
-		for (int i = 0; i < vector_size; i++, itr++) {
-			assert(*itr == i);
+	{
+		vector<int> vec;
+		vec.reserve(vector_size);
+
+		for (int i = 0; i < vector_size; i++) {
+			vec.push_back(i);
+		}
+
+		auto itr = vec.begin();
+		for (int i = 0; i < vector_size; i++) {
+			if (i == vector_size - 1) {
+				itr++;
+			} else {
+				assert(*++itr == i + 1);
+			}
 		}
 		assert(itr == vec.end());
 	}
