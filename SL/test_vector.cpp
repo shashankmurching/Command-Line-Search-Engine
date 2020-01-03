@@ -10,6 +10,21 @@ void test_basic_constr();
 void test_fill_constr();
 void test_copy_constr();
 
+void test_copy_operator();
+void test_move_operator();
+
+
+template<class T>
+void test_destructor_helper(T* data, unsigned long length, T val);
+void test_destructor();
+
+void test_begin();
+void test_end();
+void test_iterator_incr();
+void test_iterator_equal();
+void test_iterator_neq();
+void test_iterator_deref();
+
 void test_size();
 void test_capacity();
 void test_empty();
@@ -28,22 +43,14 @@ void test_data_const();
 void test_push_back();
 void test_pop_back();
 
-template<class T>
-void test_destructor_helper(T* data, unsigned long length, T val);
-void test_destructor();
-
-void test_begin();
-void test_end();
-void test_iterator_incr();
-void test_iterator_equal();
-void test_iterator_neq();
-void test_iterator_deref();
 
 enum Func { op, at, front, back };
 
 template<class T>
 void index_error_checker(Func type, vector<T> vec, unsigned long index = 0);
 
+template<class T>
+void populate_incr(vector<T> &vec, unsigned long length);
 
 const unsigned long default_cap = 0;
 const unsigned long ten_iter = 10;
@@ -53,10 +60,25 @@ const unsigned long update_factor = 2;
 int main() {
 	printf("Running vector test cases\n");
 
-	// Test constructors
+	// Test Constructors
 	test_basic_constr();
 	test_fill_constr();
 	test_copy_constr();
+	
+	// Test Equsl Operator
+	test_copy_operator();
+	test_move_operator();
+
+	// Test Destructor
+	test_destructor();
+
+	// Test Iterators
+	test_begin();
+	test_end();
+	test_iterator_incr();
+	test_iterator_equal();
+	test_iterator_neq();
+	test_iterator_deref();
 
 	// Test Capactiy
 	test_size();
@@ -79,17 +101,6 @@ int main() {
 	test_push_back();
 	test_pop_back();
 
-	// Test Destructor
-	test_destructor();
-
-	// Test Iterators
-	test_begin();
-	test_end();
-	test_iterator_incr();
-	test_iterator_equal();
-	test_iterator_neq();
-	test_iterator_deref();
-
 	printf("All vector test cases passed!\n");
 	return 0;
 }
@@ -110,16 +121,16 @@ void test_basic_constr() {
 void test_fill_constr() {
 	printf("Testing fill constructor\n");
 
-	int vec_size = 4;
-	int vec_value = 5;
+	unsigned long vec_size = 4;
+	int vec_val = 5;
 
-	vector<int> vec2(vec_size, vec_value);
+	vector<int> vec2(vec_size, vec_val);
 	assert(vec2.size() == vec_size);
 	assert(vec2.capacity() == vec_size);
 	assert(!vec2.empty());
 
 	for (int i = 0; i < vec_size; i++) {
-		assert(vec2[i] == vec_value);
+		assert(vec2[i] == vec_val);
 	}
 
 	printf("Passed!\n");
@@ -128,9 +139,9 @@ void test_fill_constr() {
 void test_copy_constr() {
 	printf("Testing copy constructor\n");
 	
-	int vec_size = 4;
-	int vec_value = 5;	
-	vector<int> original(vec_size, vec_value);
+	unsigned long vec_size = 4;
+	int vec_val = 5;	
+	vector<int> original(vec_size, vec_val);
 
 	vector<int> copy(original);
 
@@ -139,11 +150,55 @@ void test_copy_constr() {
 	assert(!copy.empty());
 
 	for (int i = 0; i < vec_size; i++) {
-		assert(copy[i] == original[i] && copy[i] == vec_value);
+		assert(copy[i] == original[i] && copy[i] == vec_val);
 	}
 	
 	printf("Passed!\n");
 }
+
+// Testing Equals Operator
+
+void test_copy_operator() {
+	printf("Testing copy operator=\n");
+
+	{
+		vector<int> vec;
+		vector<int> copy = vec;
+
+		assert(vec.empty());
+		assert(copy.size() == vec.size());
+		assert(copy.capacity() == default_cap);
+		assert(copy.capacity() == vec.capacity());
+	}
+
+	{
+		unsigned long vec_capacity = 10;
+		vector<int> vec;
+		vec.reserve(vec_capacity);
+
+		populate_incr(vec, vec_capacity);
+
+		vector<int> copy = vec;
+
+		for (int i = 0; i < vec_capacity; i++) {
+			assert(vec[i] == copy[i]);
+			assert(copy[i] == i);
+		}
+		assert(vec.size() == copy.size());
+		assert(vec.capacity() == copy.capacity());
+	}
+
+	printf("Passed!\n");
+}
+
+void test_move_operator() {
+	printf("Testing move operator=\n");
+	
+	printf("ADD TEST\n");
+
+	printf("Passed!\n");
+}
+
 
 // Testing Destructor
 
@@ -158,7 +213,7 @@ void test_destructor() {
 	printf("Testing ~vector()\n");
 
 	{
-		int vec_size = 10;
+		unsigned long vec_size = 10;
 		int vec_val = 5;
 
 		int* ptr = nullptr;
@@ -202,9 +257,7 @@ void test_end() {
 		auto end = vec.end();
 		assert(begin == end);
 
-		for (int i = 0; i < 16; i++) {
-			vec.push_back(i);
-		}
+		populate_incr(vec, 16);
 
 		begin = vec.begin();
 		end = vec.end();
@@ -222,18 +275,16 @@ void test_end() {
 void test_iterator_incr() {
 	printf("Testing iterator++()\n");
 
-	int vector_size = 10;
+	unsigned long vec_size = 10;
 	
 	{
 		vector<int> vec;
-		vec.reserve(vector_size);
+		vec.reserve(vec_size);
 
-		for (int i = 0; i < vector_size; i++) {
-			vec.push_back(i);
-		}
+		populate_incr(vec, vec_size);
 
 		auto itr = vec.begin();
-		for (int i = 0; i < vector_size; i++) {
+		for (int i = 0; i < vec_size; i++) {
 			assert(*itr++ == i);
 		}
 		assert(itr == vec.end());
@@ -241,15 +292,13 @@ void test_iterator_incr() {
 
 	{
 		vector<int> vec;
-		vec.reserve(vector_size);
+		vec.reserve(vec_size);
 
-		for (int i = 0; i < vector_size; i++) {
-			vec.push_back(i);
-		}
+		populate_incr(vec, vec_size);
 
 		auto itr = vec.begin();
-		for (int i = 0; i < vector_size; i++) {
-			if (i == vector_size - 1) {
+		for (int i = 0; i < vec_size; i++) {
+			if (i == vec_size - 1) {
 				itr++;
 			} else {
 				assert(*++itr == i + 1);
@@ -270,13 +319,13 @@ void test_iterator_equal() {
 	}
 
 	{
-		int vector_size = 10;
+		unsigned long vec_size = 10;
 		vector<int> vec;
-		vec.resize(vector_size);
+		vec.resize(vec_size);
 
 		auto itr = vec.begin();
 
-		for (int i = 0; i < vector_size; i++, itr++) {
+		for (int i = 0; i < vec_size; i++, itr++) {
 			assert(!(itr == vec.end()));
 		}
 		assert(itr == vec.end());
@@ -295,13 +344,13 @@ void test_iterator_neq() {
 	}
 
 	{
-		int vector_size = 10;
+		unsigned long vec_size = 10;
 		vector<int> vec;
-		vec.resize(vector_size);
+		vec.resize(vec_size);
 
 		auto itr = vec.begin();
 
-		for (int i = 0; i < vector_size; i++, itr++) {
+		for (int i = 0; i < vec_size; i++, itr++) {
 			assert(itr != vec.end());
 		}
 		assert(!(itr != vec.end()));
@@ -332,13 +381,11 @@ void test_iterator_deref() {
 	}
 
 	{
-		int vector_size = 10;
+		unsigned long vec_size = 10;
 		vector<int> vec;
-		vec.reserve(vector_size);
+		vec.reserve(vec_size);
 
-		for (int i = 0; i < vector_size; i++) {
-			vec.push_back(i);
-		}
+		populate_incr(vec, vec_size);
 
 		int val = 0;
 		for (auto itr = vec.begin(); itr != vec.end(); itr++, val++) {
@@ -600,9 +647,7 @@ void test_reserve() {
 		int upper_bound = 64;
 		int reserve_bound = 70;
 
-		for (int i = 0; i < val_count; i++) {
-			vec.push_back(i);
-		}
+		populate_incr(vec, val_count);
 		
 		assert(vec.capacity() == upper_bound);
 		assert(vec.size() == val_count);
@@ -635,8 +680,8 @@ void test_shrink_to_fit() {
 	}
 
 	{
-		int vec_capacity = 100;
-		int vec_size = 90;
+		unsigned long vec_capacity = 100;
+		unsigned long vec_size = 90;
 
 		for (int i = vec_size; i < vec_capacity; i++) {
 			vector<int> vec;
@@ -655,7 +700,7 @@ void test_shrink_to_fit() {
 	}
 
 	{
-		int vec_capacity = 1024;
+		unsigned long vec_capacity = 1024;
 
 		for (int i = 0; i < vec_capacity; i++) {
 			vector<int> vec;
@@ -779,14 +824,12 @@ void test_data() {
 	printf("Testing data()\n");
 
 	{
-		int vec_capacity = 100;
+		unsigned long vec_capacity = 100;
 
 		vector<int> vec;
 		vec.reserve(vec_capacity);
 
-		for (int i = 0; i < vec_capacity; i++) {
-			vec.push_back(i);
-		}
+		populate_incr(vec, vec_capacity);
 
 		int* data = vec.data();
 		for (int i = 0; i < vec_capacity; i++) {
@@ -810,7 +853,7 @@ void test_data_const() {
 	printf("Testing data() const\n");
 
 	{
-		int vec_capacity = 100;
+		unsigned long vec_capacity = 100;
 
 		vector<int> vec;
 		vec.reserve(vec_capacity);
@@ -818,6 +861,8 @@ void test_data_const() {
 		for (int i = 0; i < vec_capacity; i++) {
 			vec.push_back(i);
 		}
+
+		populate_incr(vec, vec_capacity);
 
 		const int* data = vec.data();
 		for (int i = 0; i < vec_capacity; i++) {
@@ -855,7 +900,7 @@ void test_push_back() {
 	}
 
 	{
-		int vec_size = 10;
+		unsigned long vec_size = 10;
 		vector<int> vec(vec_size, 0);
 		vec.push_back(1);
 		assert(vec[vec_size] == 1);
@@ -888,8 +933,7 @@ void test_pop_back() {
 	printf("Passed!\n");
 }
 
-
-
+// Helper Functions
 
 template<class T>
 void index_error_checker(Func type, vector<T> vec, unsigned long index) {
@@ -911,5 +955,12 @@ void index_error_checker(Func type, vector<T> vec, unsigned long index) {
 		assert(false);
 	} catch (...) {
 		assert(true);
+	}
+}
+
+template<class T>
+void populate_incr(vector<T> &vec, unsigned long length) {
+	for (int i = 0; i < length; i++) {
+		vec.push_back(i);
 	}
 }
