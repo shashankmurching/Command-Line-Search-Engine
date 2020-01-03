@@ -107,6 +107,14 @@ public:
 		return vector<T>::at(size_ - 1);
 	}
 
+	T* data() noexcept {
+		return data_;
+	}
+
+	const T* data() const noexcept {
+		return data_;
+	}
+
 	// Modifying
 	void push_back(T val) {
 		if (size_ == capacity_) {

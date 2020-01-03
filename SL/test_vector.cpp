@@ -22,6 +22,8 @@ void test_index_operator();
 void test_at();
 void test_front();
 void test_back();
+void test_data();
+void test_data_const();
 
 void test_push_back();
 void test_pop_back();
@@ -68,6 +70,8 @@ int main() {
 	test_at();
 	test_front();
 	test_back();
+	test_data();
+	test_data_const();
 
 	// Test Modifiers
 	test_push_back();
@@ -546,6 +550,68 @@ void test_back() {
 
 	printf("Passed!\n");
 }
+
+void test_data() {
+	printf("Testing data()\n");
+
+	{
+		int vec_capacity = 100;
+
+		vector<int> vec;
+		vec.reserve(vec_capacity);
+
+		for (int i = 0; i < vec_capacity; i++) {
+			vec.push_back(i);
+		}
+
+		int* data = vec.data();
+		for (int i = 0; i < vec_capacity; i++) {
+			assert(data[i] == i);
+		}
+
+		for (int i = 0; i < vec_capacity; i++) {
+			data[i] = i + vec_capacity;
+		}
+
+		for (int i = 0; i < vec_capacity; i++) {
+			assert(data[i] == i + vec_capacity);
+			assert(vec[i] == i + vec_capacity);
+		}
+	}
+
+	printf("Passed!\n");
+}
+
+void test_data_const() {
+	printf("Testing data() const\n");
+
+	{
+		int vec_capacity = 100;
+
+		vector<int> vec;
+		vec.reserve(vec_capacity);
+
+		for (int i = 0; i < vec_capacity; i++) {
+			vec.push_back(i);
+		}
+
+		const int* data = vec.data();
+		for (int i = 0; i < vec_capacity; i++) {
+			assert(data[i] == i);
+		}
+
+		for (int i = 0; i < vec_capacity; i++) {
+			vec[i] = i + vec_capacity;
+		}
+
+		for (int i = 0; i < vec_capacity; i++) {
+			assert(data[i] == i + vec_capacity);
+		}
+	}
+
+	printf("Passed!\n");
+}
+
 
 // Testing Modifiers
 
