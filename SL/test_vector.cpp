@@ -28,6 +28,8 @@ void test_data_const();
 void test_push_back();
 void test_pop_back();
 
+template<class T>
+void test_destructor_helper(T* data, unsigned long length, T val);
 void test_destructor();
 
 void test_begin();
@@ -666,9 +668,25 @@ void test_pop_back() {
 
 // Testing Destructor
 
+template<class T>
+void test_destructor_helper(T* ptr, unsigned long length, T val) {
+	vector<int> vec(length, val);
+	ptr = vec.data();
+	assert(ptr != nullptr);
+}
+
 void test_destructor() {
 	printf("Testing ~vector()\n");
-	printf("NEED TO ADD\n");
+
+	{
+		int vec_size = 10;
+		int vec_val = 5;
+
+		int* ptr = nullptr;
+		test_destructor_helper(ptr, vec_size, vec_val);
+		assert(ptr == nullptr);
+	}
+
 	printf("Passed!\n");
 }
 

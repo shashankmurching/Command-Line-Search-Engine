@@ -8,6 +8,8 @@ namespace SL {
 template<class T> 
 class vector {
 public:
+	class Iterator;
+
 	// Constructors
 	vector() {
 		capacity_ = 0;
@@ -34,6 +36,52 @@ public:
 			data_[i] = val;
 		}
 	}
+
+
+	// Equals Operator
+	vector& operator=(const vector& other) { // copy
+		delete[] data_;
+		this->vector(other);
+	}
+
+	vector& operator=(vector&& other) { // move
+		delete[] data_;
+
+		data_ = other.data_;
+		size_ = other.size_;
+		capacity_ = other.capacity_;
+
+		other.data_ = nullptr;
+		other.capacity_ = 0;
+		other.size = 0;
+	}
+
+
+	// Destructor
+	~vector() {
+		delete[] data_;
+		data_ = nullptr;
+		size_ = 0;
+		capacity_ = 0;
+	}
+
+
+	// Iterators
+	Iterator begin() {
+		return Iterator(data_, capacity_, 0);
+	}
+
+	Iterator end() {
+		return Iterator(data_, capacity_, capacity_);
+	}
+
+	// Iterator rbegin() {}
+	// Iterator rend() {}
+	// Iterator cbegin() {}
+	// Iterator cend() {}
+	// Iterator crbegin() {}
+	// Iterator crend() {}
+
 
 	// Capacity
 	unsigned long size() {
@@ -86,6 +134,7 @@ public:
 		}
 	}
 
+
 	// Accessors
 	T& operator[](unsigned long index) {
 		return vector<T>::at(index);
@@ -115,7 +164,8 @@ public:
 		return data_;
 	}
 
-	// Modifying
+
+	// Modifiers
 	void push_back(T val) {
 		if (size_ == capacity_) {
 			// need to update capacity
@@ -133,11 +183,6 @@ public:
 		prune_capacity();
 	}
 
-	// Destructor
-	~vector() {
-		delete[] data_;
-		data_ = nullptr;
-	}
 
 	class Iterator {
 	public:
@@ -187,15 +232,6 @@ public:
 
 		friend class vector;
 	};
-
-
-	Iterator begin() {
-		return Iterator(data_, capacity_, 0);
-	}
-
-	Iterator end() {
-		return Iterator(data_, capacity_, capacity_);
-	}
 
 
 private:
