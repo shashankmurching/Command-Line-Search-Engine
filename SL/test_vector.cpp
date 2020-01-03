@@ -94,7 +94,7 @@ int main() {
 	return 0;
 }
 
-// Test Constructors
+// Testing Constructors
 
 void test_basic_constr() {
 	printf("Testing basic constructor\n");
@@ -145,7 +145,229 @@ void test_copy_constr() {
 	printf("Passed!\n");
 }
 
-// Test Capacity
+// Testing Destructor
+
+template<class T>
+void test_destructor_helper(T* ptr, unsigned long length, T val) {
+	vector<int> vec(length, val);
+	ptr = vec.data();
+	assert(ptr != nullptr);
+}
+
+void test_destructor() {
+	printf("Testing ~vector()\n");
+
+	{
+		int vec_size = 10;
+		int vec_val = 5;
+
+		int* ptr = nullptr;
+		test_destructor_helper(ptr, vec_size, vec_val);
+		assert(ptr == nullptr);
+	}
+
+	printf("Passed!\n");
+}
+
+
+// Testing Iterators
+
+void test_begin() {
+	printf("Testing begin()\n");
+
+	{
+		vector<int> vec;
+		for (int i = 0; i < ten_iter; i++) {
+			vec.push_back(i);
+			auto itr = vec.begin();
+			assert(*itr == 0);
+		}
+
+		auto itr = vec.begin();
+		for (int i = 0; i < ten_iter; i++) {
+			vec[0] = i;
+			assert(*itr == i);
+		}
+	}
+
+	printf("Passed!\n");
+}
+
+void test_end() {
+	printf("Testing end()\n");
+
+	{
+		vector<int> vec;
+		auto begin = vec.begin();
+		auto end = vec.end();
+		assert(begin == end);
+
+		for (int i = 0; i < 16; i++) {
+			vec.push_back(i);
+		}
+
+		begin = vec.begin();
+		end = vec.end();
+		assert(begin != end);
+
+		for (int i = 0; i < 16; i++) {
+			begin++;
+		}
+		assert(begin == end);
+	}
+
+	printf("Passed!\n");
+}
+
+void test_iterator_incr() {
+	printf("Testing iterator++()\n");
+
+	int vector_size = 10;
+	
+	{
+		vector<int> vec;
+		vec.reserve(vector_size);
+
+		for (int i = 0; i < vector_size; i++) {
+			vec.push_back(i);
+		}
+
+		auto itr = vec.begin();
+		for (int i = 0; i < vector_size; i++) {
+			assert(*itr++ == i);
+		}
+		assert(itr == vec.end());
+	}
+
+	{
+		vector<int> vec;
+		vec.reserve(vector_size);
+
+		for (int i = 0; i < vector_size; i++) {
+			vec.push_back(i);
+		}
+
+		auto itr = vec.begin();
+		for (int i = 0; i < vector_size; i++) {
+			if (i == vector_size - 1) {
+				itr++;
+			} else {
+				assert(*++itr == i + 1);
+			}
+		}
+		assert(itr == vec.end());
+	}
+
+	printf("Passed!\n");
+}
+
+void test_iterator_equal() {
+	printf("Testing Iterator==()\n");
+	
+	{
+		vector<int> vec;
+		assert(vec.begin() == vec.end());
+	}
+
+	{
+		int vector_size = 10;
+		vector<int> vec;
+		vec.resize(vector_size);
+
+		auto itr = vec.begin();
+
+		for (int i = 0; i < vector_size; i++, itr++) {
+			assert(!(itr == vec.end()));
+		}
+		assert(itr == vec.end());
+	}
+
+
+	printf("Passed!\n");
+}
+
+void test_iterator_neq() {
+	printf("Testing Iterator!=()\n");
+	
+	{
+		vector<int> vec;
+		assert(!(vec.begin() != vec.end()));
+	}
+
+	{
+		int vector_size = 10;
+		vector<int> vec;
+		vec.resize(vector_size);
+
+		auto itr = vec.begin();
+
+		for (int i = 0; i < vector_size; i++, itr++) {
+			assert(itr != vec.end());
+		}
+		assert(!(itr != vec.end()));
+	}
+
+	printf("Passed!\n");
+}
+
+void test_iterator_deref() {
+	printf("Testing Iterator*()\n");
+	
+	{
+		vector<int> vec;
+		auto itr = vec.begin();
+		try {
+			*itr;
+			assert(false);
+		} catch (...) {
+			assert(true);
+		}
+		itr = vec.end();
+		try {
+			*itr;
+			assert(false);
+		} catch (...) {
+			assert(true);
+		}
+	}
+
+	{
+		int vector_size = 10;
+		vector<int> vec;
+		vec.reserve(vector_size);
+
+		for (int i = 0; i < vector_size; i++) {
+			vec.push_back(i);
+		}
+
+		int val = 0;
+		for (auto itr = vec.begin(); itr != vec.end(); itr++, val++) {
+			assert(*itr == val);
+		}
+	}
+
+	{
+		vector<int> vec;
+		vec.resize(1);
+		auto itr = vec.begin();
+		assert(*itr == 0);
+		assert(vec.capacity() == 1);
+		
+		itr++;
+		assert(itr == vec.end());		
+		
+		try {
+			*itr;
+			assert(false);
+		} catch (...) {
+			assert(true);
+		}
+	}
+
+	printf("Passed!\n");
+}
+
+// Testing Capacity
 
 void test_size() {
 	printf("Testing size()\n");
@@ -468,7 +690,7 @@ void test_shrink_to_fit() {
 	printf("Passed!\n");
 }
 
-// Test Accessors
+// Testing Accessors
 
 void test_index_operator() {
 	printf("Testing operator[]\n");
@@ -666,226 +888,7 @@ void test_pop_back() {
 	printf("Passed!\n");
 }
 
-// Testing Destructor
 
-template<class T>
-void test_destructor_helper(T* ptr, unsigned long length, T val) {
-	vector<int> vec(length, val);
-	ptr = vec.data();
-	assert(ptr != nullptr);
-}
-
-void test_destructor() {
-	printf("Testing ~vector()\n");
-
-	{
-		int vec_size = 10;
-		int vec_val = 5;
-
-		int* ptr = nullptr;
-		test_destructor_helper(ptr, vec_size, vec_val);
-		assert(ptr == nullptr);
-	}
-
-	printf("Passed!\n");
-}
-
-// Testing Iterators
-
-void test_begin() {
-	printf("Testing begin()\n");
-
-	{
-		vector<int> vec;
-		for (int i = 0; i < ten_iter; i++) {
-			vec.push_back(i);
-			auto itr = vec.begin();
-			assert(*itr == 0);
-		}
-
-		auto itr = vec.begin();
-		for (int i = 0; i < ten_iter; i++) {
-			vec[0] = i;
-			assert(*itr == i);
-		}
-	}
-
-	printf("Passed!\n");
-}
-
-void test_end() {
-	printf("Testing end()\n");
-
-	{
-		vector<int> vec;
-		auto begin = vec.begin();
-		auto end = vec.end();
-		assert(begin == end);
-
-		for (int i = 0; i < 16; i++) {
-			vec.push_back(i);
-		}
-
-		begin = vec.begin();
-		end = vec.end();
-		assert(begin != end);
-
-		for (int i = 0; i < 16; i++) {
-			begin++;
-		}
-		assert(begin == end);
-	}
-
-	printf("Passed!\n");
-}
-
-void test_iterator_incr() {
-	printf("Testing iterator++()\n");
-
-	int vector_size = 10;
-	
-	{
-		vector<int> vec;
-		vec.reserve(vector_size);
-
-		for (int i = 0; i < vector_size; i++) {
-			vec.push_back(i);
-		}
-
-		auto itr = vec.begin();
-		for (int i = 0; i < vector_size; i++) {
-			assert(*itr++ == i);
-		}
-		assert(itr == vec.end());
-	}
-
-	{
-		vector<int> vec;
-		vec.reserve(vector_size);
-
-		for (int i = 0; i < vector_size; i++) {
-			vec.push_back(i);
-		}
-
-		auto itr = vec.begin();
-		for (int i = 0; i < vector_size; i++) {
-			if (i == vector_size - 1) {
-				itr++;
-			} else {
-				assert(*++itr == i + 1);
-			}
-		}
-		assert(itr == vec.end());
-	}
-
-	printf("Passed!\n");
-}
-
-void test_iterator_equal() {
-	printf("Testing Iterator==()\n");
-	
-	{
-		vector<int> vec;
-		assert(vec.begin() == vec.end());
-	}
-
-	{
-		int vector_size = 10;
-		vector<int> vec;
-		vec.resize(vector_size);
-
-		auto itr = vec.begin();
-
-		for (int i = 0; i < vector_size; i++, itr++) {
-			assert(!(itr == vec.end()));
-		}
-		assert(itr == vec.end());
-	}
-
-
-	printf("Passed!\n");
-}
-
-void test_iterator_neq() {
-	printf("Testing Iterator!=()\n");
-	
-	{
-		vector<int> vec;
-		assert(!(vec.begin() != vec.end()));
-	}
-
-	{
-		int vector_size = 10;
-		vector<int> vec;
-		vec.resize(vector_size);
-
-		auto itr = vec.begin();
-
-		for (int i = 0; i < vector_size; i++, itr++) {
-			assert(itr != vec.end());
-		}
-		assert(!(itr != vec.end()));
-	}
-
-	printf("Passed!\n");
-}
-
-void test_iterator_deref() {
-	printf("Testing Iterator*()\n");
-	
-	{
-		vector<int> vec;
-		auto itr = vec.begin();
-		try {
-			*itr;
-			assert(false);
-		} catch (...) {
-			assert(true);
-		}
-		itr = vec.end();
-		try {
-			*itr;
-			assert(false);
-		} catch (...) {
-			assert(true);
-		}
-	}
-
-	{
-		int vector_size = 10;
-		vector<int> vec;
-		vec.reserve(vector_size);
-
-		for (int i = 0; i < vector_size; i++) {
-			vec.push_back(i);
-		}
-
-		int val = 0;
-		for (auto itr = vec.begin(); itr != vec.end(); itr++, val++) {
-			assert(*itr == val);
-		}
-	}
-
-	{
-		vector<int> vec;
-		vec.resize(1);
-		auto itr = vec.begin();
-		assert(*itr == 0);
-		assert(vec.capacity() == 1);
-		
-		itr++;
-		assert(itr == vec.end());		
-		
-		try {
-			*itr;
-			assert(false);
-		} catch (...) {
-			assert(true);
-		}
-	}
-
-	printf("Passed!\n");
-}
 
 
 template<class T>
