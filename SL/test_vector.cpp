@@ -354,6 +354,7 @@ void test_iterator_equal() {
 	{
 		vector<int> vec;
 		assert(vec.begin() == vec.end());
+		assert(vec.rbegin() == vec.rend());
 	}
 
 	{
@@ -362,13 +363,34 @@ void test_iterator_equal() {
 		vec.resize(vec_size);
 
 		auto itr = vec.begin();
+		auto ritr = vec.rbegin();
 
-		for (int i = 0; i < vec_size; i++, itr++) {
+		for (int i = 0; i < vec_size; i++, itr++, ritr++) {
 			assert(!(itr == vec.end()));
+			assert(!(ritr == vec.rend()));			
 		}
 		assert(itr == vec.end());
+		assert(ritr == vec.rend());
+
 	}
 
+	{
+		vector<int> vec;
+		bool result = false;
+		try {
+			result = vec.begin() == vec.rbegin();
+			assert(false);
+		} catch (...) {
+			assert(true);
+		}
+
+		try {
+			result = vec.end() == vec.rend();
+			assert(false);
+		} catch (...) {
+			assert(true);
+		}
+	}
 
 	printf("Passed!\n");
 }
@@ -379,6 +401,7 @@ void test_iterator_neq() {
 	{
 		vector<int> vec;
 		assert(!(vec.begin() != vec.end()));
+		assert(!(vec.rbegin() != vec.rend()));		
 	}
 
 	{
@@ -387,11 +410,32 @@ void test_iterator_neq() {
 		vec.resize(vec_size);
 
 		auto itr = vec.begin();
+		auto ritr = vec.rbegin();
 
-		for (int i = 0; i < vec_size; i++, itr++) {
+		for (int i = 0; i < vec_size; i++, itr++, ritr++) {
 			assert(itr != vec.end());
+			assert(ritr != vec.rend());
 		}
 		assert(!(itr != vec.end()));
+		assert(!(ritr != vec.rend()));
+	}
+
+	{
+		vector<int> vec;
+		bool result = false;
+		try {
+			result = vec.begin() != vec.rbegin();
+			assert(false);
+		} catch (...) {
+			assert(true);
+		}
+
+		try {
+			result = vec.end() != vec.rend();
+			assert(false);
+		} catch (...) {
+			assert(true);
+		}
 	}
 
 	printf("Passed!\n");
