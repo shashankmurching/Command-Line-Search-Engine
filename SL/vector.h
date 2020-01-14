@@ -75,6 +75,14 @@ public:
 		return Iterator(data_, capacity_, size_);
 	}
 
+	Iterator rbegin() {
+		return Iterator(data_, capacity_, size_ - 1, true);
+	}
+
+	Iterator rend() {
+		return Iterator(data_, capacity_, -1, true);
+	}
+
 	// Iterator rbegin() {}
 	// Iterator rend() {}
 	// Iterator cbegin() {}
@@ -186,13 +194,13 @@ public:
 
 	class Iterator {
 	public:
-		Iterator() : data_(nullptr), capacity_(0), index_(0) {}
+		Iterator() : data_(nullptr), capacity_(0), index_(0), reverse_(false) {}
 
 		// Pre increment op
 		//increment before doing op
 
 		Iterator& operator++() {
-			index_ += 1;
+			index_ += reverse_ ? -1 : 1;
 			return *this;
 		}
 
@@ -200,12 +208,16 @@ public:
 		// increment after doing op
 
 		Iterator operator++(int) {
-			Iterator temp(data_, capacity_, index_);
-			index_ += 1;
+			Iterator temp(data_, capacity_, index_, reverse_);
+			index_ += reverse_ ? -1 : 1;
 			return temp;
 		}
 
 		bool operator==(const Iterator &other) {
+			if (reverse_ != other.reverse_) {
+				throw "Cannot compare normal iterator with reverse iterator";
+			}
+
 			return data_ == other.data_ 
 					&& capacity_ == other.capacity_ 
 					&& index_ == other.index_;
@@ -225,10 +237,14 @@ public:
 	private:
 		unsigned long capacity_;
 		unsigned long index_;
+		bool reverse_;
 		T* data_;
 
 		Iterator(T* data, unsigned long capacity, unsigned long index) : 
-				capacity_(capacity), index_(index), data_(data) {}
+				capacity_(capacity), index_(index), reverse_(false), data_(data) {}
+
+		Iterator(T* data, unsigned long capacity, unsigned long index, bool reverse) : 
+				capacity_(capacity), index_(index), reverse_(reverse), data_(data) {}
 
 		friend class vector;
 	};

@@ -25,6 +25,9 @@ void test_iterator_equal();
 void test_iterator_neq();
 void test_iterator_deref();
 
+void test_rbegin();
+void test_rend();
+
 void test_size();
 void test_capacity();
 void test_empty();
@@ -79,6 +82,8 @@ int main() {
 	test_iterator_equal();
 	test_iterator_neq();
 	test_iterator_deref();
+	test_rbegin();
+	test_rend();
 
 	// Test Capactiy
 	test_size();
@@ -232,6 +237,11 @@ void test_begin() {
 
 	{
 		vector<int> vec;
+		assert(vec.begin() == vec.end());
+	}
+
+	{
+		vector<int> vec;
 		for (int i = 0; i < ten_iter; i++) {
 			vec.push_back(i);
 			auto itr = vec.begin();
@@ -296,7 +306,6 @@ void test_end() {
 		}
 		assert(itr == vec.end());
 	}
-
 
 	printf("Passed!\n");
 }
@@ -438,6 +447,84 @@ void test_iterator_deref() {
 		} catch (...) {
 			assert(true);
 		}
+	}
+
+	printf("Passed!\n");
+}
+
+void test_rbegin() {
+	printf("Testing rbegin()\n");
+	
+	{
+		vector<int> vec;
+		assert(vec.rbegin() == vec.rend());
+	}
+
+	{
+		vector<int> vec;
+		for (int i = 0; i < ten_iter; i++) {
+			vec.push_back(i);
+			auto itr = vec.rbegin();
+			assert(*itr == i);
+		}
+
+		auto itr = vec.rbegin();
+		for (int i = ten_iter - 1; i >= 0; i--) {
+			vec[ten_iter - 1] = i;
+			assert(*itr == i);
+		}
+	}
+
+	printf("Passed!\n");
+}
+
+void test_rend() {
+	printf("Testing rend()\n");
+	
+	{
+		vector<int> vec;
+		auto begin = vec.rbegin();
+		auto end = vec.rend();
+		assert(begin == end);
+
+		populate_incr(vec, 16);
+
+		begin = vec.rbegin();
+		end = vec.rend();
+		assert(begin != end);
+
+		for (int i = 0; i < 16; i++) {
+			begin++;
+		}
+		assert(begin == end);
+	}
+
+	{
+		vector<int> vec;
+		assert(vec.rbegin() == vec.rend());
+
+		unsigned long vec_capacity = 10;
+		vec.reserve(vec_capacity);
+		assert(vec.rbegin() == vec.rend());
+	}
+
+	{
+		unsigned long vec_capacity = 10;
+		unsigned long vec_size = 5;
+		
+		vector<int> vec;
+		vec.reserve(vec_capacity);
+		assert(vec.rbegin() == vec.rend());
+
+		populate_incr(vec, vec_size);
+
+		auto itr = vec.rbegin();
+		assert(itr != vec.rend());
+
+		for (int i = 0; i < vec_size; i++) {
+			assert(itr++ != vec.rend());
+		}
+		assert(itr == vec.rend());
 	}
 
 	printf("Passed!\n");
